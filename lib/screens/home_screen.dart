@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import '/screens/details_screen.dart';
 
 class TaskScreen extends StatelessWidget {
-  final List<String> tasks = ['Сдать отчёт', 'Подготовиться к экзамену', 'Посмотреть лекцию'];
+  final List<String> tasks = [
+    'Сдать отчёт',
+    'Подготовиться к экзамену',
+    'Посмотреть лекцию',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Мои задачи'), backgroundColor: Colors.deepPurple),
+      appBar: AppBar(
+        title: const Text('Мои задачи'),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
@@ -18,9 +26,12 @@ class TaskScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Добавление новой задачи
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DetailsScreen()),
+          );
         },
-        child: const Icon(Icons.add),
+        child: const Text('Перейти на экран деталей'),
       ),
     );
   }
