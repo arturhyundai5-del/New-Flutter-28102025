@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/form_screen.dart';
 void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -7,7 +7,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TaskScreen(),
+      title: 'Flutter Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const FormScreen(),
     );
   }
 }
