@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -9,10 +10,14 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  // Контроллеры для получения текста
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData(); // Загружаем сохранённые данные при старте
+  }
 
   @override
   void dispose() {
@@ -21,10 +26,29 @@ class _FormScreenState extends State<FormScreen> {
     super.dispose();
   }
 
+  Future<void> _saveData(String name, String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', name);
+    await prefs.setString('user_email', email);
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? '';
+    final email = prefs.getString('user_email') ?? '';
+
+    setState(() {
+      _nameController.text = name;
+      _emailController.text = email;
+    });
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text;
       final email = _emailController.text;
+
+      _saveData(name, email); // сохраняем данные
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Данные сохранены: $name, $email')),
@@ -40,7 +64,6 @@ class _FormScreenState extends State<FormScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction, // ✅ удобная проверка
           child: Column(
             children: [
               TextFormField(
@@ -49,12 +72,8 @@ class _FormScreenState extends State<FormScreen> {
                   labelText: 'Имя',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Введите имя';
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Введите имя' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -67,7 +86,7 @@ class _FormScreenState extends State<FormScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Введите email';
-                  } else if (!value.contains('@'))  {
+                  } else if (!value.contains('@')) {
                     return 'Неверный формат email';
                   }
                   return null;
